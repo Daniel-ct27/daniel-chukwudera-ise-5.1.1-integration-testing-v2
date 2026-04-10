@@ -4,7 +4,7 @@ import numpy as np
 
 st.set_page_config(page_title="Plotly Animation Demo", layout="wide")
 
-st.title("3 Basic Plotly Animations in Streamlit")
+st.title("Plotly Animations in Streamlit")
 
 animation_choice = st.selectbox(
     "Choose an animation",
@@ -12,10 +12,12 @@ animation_choice = st.selectbox(
         "Rotating 3D Helix",
         "Moving Sine Wave",
         "Bouncing Ball",
+        "Roller Coaster",  # NEW
     ],
 )
 
 num_frames = 60
+
 
 
 def rotating_3d_helix():
@@ -45,14 +47,7 @@ def rotating_3d_helix():
         )
 
     fig = go.Figure(
-        data=[
-            go.Scatter3d(
-                x=x,
-                y=y,
-                z=z,
-                mode="lines",
-            )
-        ],
+        data=[go.Scatter3d(x=x, y=y, z=z, mode="lines")],
         frames=frames,
     )
 
@@ -71,24 +66,12 @@ def rotating_3d_helix():
                     {
                         "label": "Play",
                         "method": "animate",
-                        "args": [
-                            None,
-                            {
-                                "frame": {"duration": 50, "redraw": True},
-                                "fromcurrent": True,
-                            },
-                        ],
+                        "args": [None, {"frame": {"duration": 50, "redraw": True}, "fromcurrent": True}],
                     },
                     {
                         "label": "Pause",
                         "method": "animate",
-                        "args": [
-                            [None],
-                            {
-                                "frame": {"duration": 0, "redraw": False},
-                                "mode": "immediate",
-                            },
-                        ],
+                        "args": [[None], {"frame": {"duration": 0, "redraw": False}, "mode": "immediate"}],
                     },
                 ],
             }
@@ -96,6 +79,7 @@ def rotating_3d_helix():
         margin=dict(l=0, r=0, t=50, b=0),
     )
     return fig
+
 
 
 def moving_sine_wave():
@@ -108,25 +92,13 @@ def moving_sine_wave():
 
         frames.append(
             go.Frame(
-                data=[
-                    go.Scatter(
-                        x=x,
-                        y=y,
-                        mode="lines",
-                    )
-                ],
+                data=[go.Scatter(x=x, y=y, mode="lines")],
                 name=str(i),
             )
         )
 
     fig = go.Figure(
-        data=[
-            go.Scatter(
-                x=x,
-                y=np.sin(x),
-                mode="lines",
-            )
-        ],
+        data=[go.Scatter(x=x, y=np.sin(x), mode="lines")],
         frames=frames,
     )
 
@@ -141,24 +113,12 @@ def moving_sine_wave():
                     {
                         "label": "Play",
                         "method": "animate",
-                        "args": [
-                            None,
-                            {
-                                "frame": {"duration": 50, "redraw": True},
-                                "fromcurrent": True,
-                            },
-                        ],
+                        "args": [None, {"frame": {"duration": 50, "redraw": True}, "fromcurrent": True}],
                     },
                     {
                         "label": "Pause",
                         "method": "animate",
-                        "args": [
-                            [None],
-                            {
-                                "frame": {"duration": 0, "redraw": False},
-                                "mode": "immediate",
-                            },
-                        ],
+                        "args": [[None], {"frame": {"duration": 0, "redraw": False}, "mode": "immediate"}],
                     },
                 ],
             }
@@ -211,24 +171,12 @@ def bouncing_ball():
                     {
                         "label": "Play",
                         "method": "animate",
-                        "args": [
-                            None,
-                            {
-                                "frame": {"duration": 60, "redraw": True},
-                                "fromcurrent": True,
-                            },
-                        ],
+                        "args": [None, {"frame": {"duration": 60, "redraw": True}, "fromcurrent": True}],
                     },
                     {
                         "label": "Pause",
                         "method": "animate",
-                        "args": [
-                            [None],
-                            {
-                                "frame": {"duration": 0, "redraw": False},
-                                "mode": "immediate",
-                            },
-                        ],
+                        "args": [[None], {"frame": {"duration": 0, "redraw": False}, "mode": "immediate"}],
                     },
                 ],
             }
@@ -238,10 +186,77 @@ def bouncing_ball():
     return fig
 
 
+
+def roller_coaster():
+    x = np.linspace(0, 4 * np.pi, 300)
+    y = np.sin(x) + 0.3 * np.sin(3 * x)
+
+    frames = []
+    for i in range(len(x)):
+        frames.append(
+            go.Frame(
+                data=[
+                    go.Scatter(x=x, y=y, mode="lines"),
+                    go.Scatter(
+                        x=[x[i]],
+                        y=[y[i]],
+                        mode="markers",
+                        marker=dict(size=12),
+                    ),
+                ],
+                name=str(i),
+            )
+        )
+
+    fig = go.Figure(
+        data=[
+            go.Scatter(x=x, y=y, mode="lines"),
+            go.Scatter(
+                x=[x[0]],
+                y=[y[0]],
+                mode="markers",
+                marker=dict(size=12),
+            ),
+        ],
+        frames=frames,
+    )
+
+    fig.update_layout(
+        title="Roller Coaster Animation",
+        xaxis=dict(range=[0, 4 * np.pi]),
+        yaxis=dict(range=[-2, 2]),
+        updatemenus=[
+            {
+                "type": "buttons",
+                "buttons": [
+                    {
+                        "label": "Play",
+                        "method": "animate",
+                        "args": [None, {"frame": {"duration": 40, "redraw": True}, "fromcurrent": True}],
+                    },
+                    {
+                        "label": "Pause",
+                        "method": "animate",
+                        "args": [[None], {"frame": {"duration": 0, "redraw": False}, "mode": "immediate"}],
+                    },
+                ],
+            }
+        ],
+        margin=dict(l=0, r=0, t=50, b=0),
+    )
+
+    return fig
+
+
+# -----------------------
+# Selection Logic
+# -----------------------
 if animation_choice == "Rotating 3D Helix":
     fig = rotating_3d_helix()
 elif animation_choice == "Moving Sine Wave":
     fig = moving_sine_wave()
+elif animation_choice == "Roller Coaster":
+    fig = roller_coaster()
 else:
     fig = bouncing_ball()
 
